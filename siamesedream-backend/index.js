@@ -12,6 +12,7 @@ const bcrypt = require('bcrypt');
 // Connect to PostgreSQL using environment variable
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
 });
 
 // Health check route
