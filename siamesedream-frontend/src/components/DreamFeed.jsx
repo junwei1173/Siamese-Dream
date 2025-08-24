@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 import { useCallback } from "react";
+import API_URL from '../config/api';
 
 function DreamFeed() {
   const [dreams, setDreams] = useState([]);
