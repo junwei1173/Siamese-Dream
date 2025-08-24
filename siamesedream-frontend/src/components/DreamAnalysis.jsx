@@ -27,6 +27,111 @@ function DreamAnalysis() {
   };
 }, []);
 
+  const processAnalysisData = useCallback((dreams) => {
+    if (!dreams.length) {
+      return {
+        totalDreams: 0,
+        dateRange: { start: null, end: null },
+        moodAnalysis: {},
+        sleepAnalysis: {},
+        lucidAnalysis: {},
+        symbolAnalysis: {},
+        correlations: {},
+        trends: {},
+        recommendations: []
+      };
+    }
+
+    // Basic stats
+    const totalDreams = dreams.length;
+    const lucidDreams = dreams.filter(d => d.is_lucid);
+    const dreamsWithMood = dreams.filter(d => d.mood_score);
+    const dreamsWithSleep = dreams.filter(d => d.sleep_duration || d.sleep_quality);
+
+    // Date range
+    const dates = dreams.map(d => new Date(d.dream_date)).sort((a, b) => a - b);
+    const dateRange = {
+      start: dates[0],
+      end: dates[dates.length - 1]
+    };
+
+    // Mood Analysis
+    const moodScores = dreamsWithMood.map(d => d.mood_score);
+    const moodAnalysis = {
+      average: moodScores.reduce((sum, score) => sum + score, 0) / moodScores.length || 0,
+      distribution: {
+        nightmare: moodScores.filter(s => s <= 3).length,
+        negative: moodScores.filter(s => s > 3 && s <= 5).length,
+        neutral: moodScores.filter(s => s > 5 && s <= 7).length,
+        positive: moodScores.filter(s => s > 7 && s <= 9).length,
+        blissful: moodScores.filter(s => s >= 10).length
+      },
+      trend: calculateTrend(dreamsWithMood.map(d => ({ date: d.dream_date, value: d.mood_score })))
+    };
+
+    // Sleep Analysis
+    const sleepDurations = dreamsWithSleep.filter(d => d.sleep_duration).map(d => d.sleep_duration);
+    const sleepQualities = dreamsWithSleep.filter(d => d.sleep_quality).map(d => d.sleep_quality);
+    const sleepAnalysis = {
+      avgDuration: sleepDurations.reduce((sum, dur) => sum + dur, 0) / sleepDurations.length || 0,
+      avgQuality: sleepQualities.reduce((sum, qual) => sum + qual, 0) / sleepQualities.length || 0,
+      optimalRange: sleepDurations.filter(d => d >= 7 && d <= 9).length,
+      disruptions: dreams.flatMap(d => d.sleep_disruptions || []).reduce((acc, disruption) => {
+        acc[disruption] = (acc[disruption] || 0) + 1;
+        return acc;
+      }, {})
+    };
+
+    // Lucid Analysis
+    const lucidAnalysis = {
+      percentage: (lucidDreams.length / totalDreams) * 100,
+      trend: calculateTrend(dreams.map(d => ({ date: d.dream_date, value: d.is_lucid ? 1 : 0 }))),
+      avgMoodWhenLucid: lucidDreams.filter(d => d.mood_score).reduce((sum, d) => sum + d.mood_score, 0) / lucidDreams.filter(d => d.mood_score).length || 0,
+      avgMoodWhenNonLucid: dreams.filter(d => !d.is_lucid && d.mood_score).reduce((sum, d) => sum + d.mood_score, 0) / dreams.filter(d => !d.is_lucid && d.mood_score).length || 0
+    };
+
+    // Symbol Analysis
+    const allSymbols = dreams.flatMap(d => d.symbols || []).filter(s => s !== null);
+    const symbolCounts = allSymbols.reduce((acc, symbol) => {
+      acc[symbol] = (acc[symbol] || 0) + 1;
+      return acc;
+    }, {});
+    const symbolAnalysis = {
+      totalUnique: Object.keys(symbolCounts).length,
+      mostCommon: Object.entries(symbolCounts)
+        .sort(([,a], [,b]) => b - a)
+        .slice(0, 10)
+        .map(([symbol, count]) => ({ symbol, count, percentage: (count / totalDreams) * 100 })),
+      symbolMoodCorrelation: calculateSymbolMoodCorrelation(dreams, symbolCounts)
+    };
+
+    // Correlations
+    const correlations = calculateCorrelations(dreams);
+
+    // Trends (monthly breakdown)
+    const trends = calculateMonthlyTrends(dreams);
+
+    // Generate recommendations
+    const recommendations = generateRecommendations({
+      moodAnalysis,
+      sleepAnalysis,
+      lucidAnalysis,
+      symbolAnalysis,
+      correlations
+    });
+
+    return {
+      totalDreams,
+      dateRange,
+      moodAnalysis,
+      sleepAnalysis,
+      lucidAnalysis,
+      symbolAnalysis,
+      correlations,
+      trends,
+      recommendations
+    };
+  }, [calculateCorrelations]);
 
   useEffect(() => {
     const fetchAnalysisData = async () => {
@@ -230,112 +335,6 @@ function DreamAnalysis() {
     
     return recommendations;
   };
-
-  const processAnalysisData = useCallback((dreams) => {
-    if (!dreams.length) {
-      return {
-        totalDreams: 0,
-        dateRange: { start: null, end: null },
-        moodAnalysis: {},
-        sleepAnalysis: {},
-        lucidAnalysis: {},
-        symbolAnalysis: {},
-        correlations: {},
-        trends: {},
-        recommendations: []
-      };
-    }
-
-    // Basic stats
-    const totalDreams = dreams.length;
-    const lucidDreams = dreams.filter(d => d.is_lucid);
-    const dreamsWithMood = dreams.filter(d => d.mood_score);
-    const dreamsWithSleep = dreams.filter(d => d.sleep_duration || d.sleep_quality);
-
-    // Date range
-    const dates = dreams.map(d => new Date(d.dream_date)).sort((a, b) => a - b);
-    const dateRange = {
-      start: dates[0],
-      end: dates[dates.length - 1]
-    };
-
-    // Mood Analysis
-    const moodScores = dreamsWithMood.map(d => d.mood_score);
-    const moodAnalysis = {
-      average: moodScores.reduce((sum, score) => sum + score, 0) / moodScores.length || 0,
-      distribution: {
-        nightmare: moodScores.filter(s => s <= 3).length,
-        negative: moodScores.filter(s => s > 3 && s <= 5).length,
-        neutral: moodScores.filter(s => s > 5 && s <= 7).length,
-        positive: moodScores.filter(s => s > 7 && s <= 9).length,
-        blissful: moodScores.filter(s => s >= 10).length
-      },
-      trend: calculateTrend(dreamsWithMood.map(d => ({ date: d.dream_date, value: d.mood_score })))
-    };
-
-    // Sleep Analysis
-    const sleepDurations = dreamsWithSleep.filter(d => d.sleep_duration).map(d => d.sleep_duration);
-    const sleepQualities = dreamsWithSleep.filter(d => d.sleep_quality).map(d => d.sleep_quality);
-    const sleepAnalysis = {
-      avgDuration: sleepDurations.reduce((sum, dur) => sum + dur, 0) / sleepDurations.length || 0,
-      avgQuality: sleepQualities.reduce((sum, qual) => sum + qual, 0) / sleepQualities.length || 0,
-      optimalRange: sleepDurations.filter(d => d >= 7 && d <= 9).length,
-      disruptions: dreams.flatMap(d => d.sleep_disruptions || []).reduce((acc, disruption) => {
-        acc[disruption] = (acc[disruption] || 0) + 1;
-        return acc;
-      }, {})
-    };
-
-    // Lucid Analysis
-    const lucidAnalysis = {
-      percentage: (lucidDreams.length / totalDreams) * 100,
-      trend: calculateTrend(dreams.map(d => ({ date: d.dream_date, value: d.is_lucid ? 1 : 0 }))),
-      avgMoodWhenLucid: lucidDreams.filter(d => d.mood_score).reduce((sum, d) => sum + d.mood_score, 0) / lucidDreams.filter(d => d.mood_score).length || 0,
-      avgMoodWhenNonLucid: dreams.filter(d => !d.is_lucid && d.mood_score).reduce((sum, d) => sum + d.mood_score, 0) / dreams.filter(d => !d.is_lucid && d.mood_score).length || 0
-    };
-
-    // Symbol Analysis
-    const allSymbols = dreams.flatMap(d => d.symbols || []).filter(s => s !== null);
-    const symbolCounts = allSymbols.reduce((acc, symbol) => {
-      acc[symbol] = (acc[symbol] || 0) + 1;
-      return acc;
-    }, {});
-    const symbolAnalysis = {
-      totalUnique: Object.keys(symbolCounts).length,
-      mostCommon: Object.entries(symbolCounts)
-        .sort(([,a], [,b]) => b - a)
-        .slice(0, 10)
-        .map(([symbol, count]) => ({ symbol, count, percentage: (count / totalDreams) * 100 })),
-      symbolMoodCorrelation: calculateSymbolMoodCorrelation(dreams, symbolCounts)
-    };
-
-    // Correlations
-    const correlations = calculateCorrelations(dreams);
-
-    // Trends (monthly breakdown)
-    const trends = calculateMonthlyTrends(dreams);
-
-    // Generate recommendations
-    const recommendations = generateRecommendations({
-      moodAnalysis,
-      sleepAnalysis,
-      lucidAnalysis,
-      symbolAnalysis,
-      correlations
-    });
-
-    return {
-      totalDreams,
-      dateRange,
-      moodAnalysis,
-      sleepAnalysis,
-      lucidAnalysis,
-      symbolAnalysis,
-      correlations,
-      trends,
-      recommendations
-    };
-  }, [calculateCorrelations]);
 
   if (loading) {
     return (
