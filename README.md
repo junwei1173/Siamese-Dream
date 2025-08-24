@@ -1,3 +1,3 @@
-https://siamese-dream.vercel.app/dashboard
+https://siamese-dream.vercel.app
 
 still in progress
