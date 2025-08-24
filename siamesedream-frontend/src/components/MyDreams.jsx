@@ -50,7 +50,7 @@ function MyDreams() {
       if (moodMin) params.set('mood_min', moodMin);
       if (moodMax) params.set('mood_max', moodMax);
 
-      const response = await fetch(`http://localhost:5051/dreams/search?${params}`);
+      const response = await fetch(`${API_URL}/dreams/search?${params}`);;
 
       if (!response.ok) {
         throw new Error('Failed to search dreams');
@@ -155,7 +155,7 @@ useEffect(() => {
 
     try {
       const response = await fetch(
-        `http://localhost:5051/dreams/${dreamId}?user_id=${user.id}`,
+        `${API_URL}/dreams/${dreamId}?user_id=${user.id}`,
         { method: 'DELETE' }
       );
 
