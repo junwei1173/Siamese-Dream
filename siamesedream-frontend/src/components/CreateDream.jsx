@@ -58,7 +58,7 @@ function CreateDream() {
     console.log('Sending dream data:', dreamData);
 
     try {
-      await axios.post("http://localhost:5051/dreams", dreamData);
+      await axios.post(`${API_URL}/dreams`, dreamData);
 
       setMsg("✅ Dream submitted successfully!");
       setTitle("");
