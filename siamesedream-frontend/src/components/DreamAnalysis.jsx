@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';
+import API_URL from '../config/api';
 
 function DreamAnalysis() {
   const [analysisData, setAnalysisData] = useState(null);
