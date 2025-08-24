@@ -647,6 +647,42 @@ app.get('/dreams/debug/:id', async (req, res) => {
   }
 });
 
+// POST /register - create new user
+app.post('/register', async (req, res) => {
+  const { username, email, password } = req.body;
+
+  if (!username || !email || !password) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  try {
+    // Check if user exists
+    const existingUser = await pool.query(
+      'SELECT id FROM users WHERE username = $1 OR email = $2',
+      [username, email]
+    );
+    if (existingUser.rows.length > 0) {
+      return res.status(400).json({ error: "Username or email already taken" });
+    }
+
+    // Hash password
+    const saltRounds = 10;
+    const password_hash = await bcrypt.hash(password, saltRounds);
+
+    // Insert user
+    const result = await pool.query(
+      'INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email',
+      [username, email, password_hash]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error("Error registering user:", err);
+    res.status(500).json({ error: "Failed to register user" });
+  }
+});
+
+
 const PORT = process.env.PORT || 5051;
 app.listen(PORT, () => {
   console.log(`🚀 Server listening on port ${PORT}`);
