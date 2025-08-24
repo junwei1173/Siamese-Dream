@@ -137,7 +137,7 @@ function Dashboard() {
             fontSize: '1.5rem',
             textAlign: 'center'
           }}>
-            Community Dream Statistics
+            Community Drjkjeam Statistics
           </h3>
           <div style={{
             display: 'grid',
