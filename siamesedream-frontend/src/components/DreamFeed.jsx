@@ -37,7 +37,9 @@ function DreamFeed() {
     }
   };
 
- const fetchDreams = useCallback(async (append = false) => {
+ // Replace your fetchDreams function with this corrected version:
+
+const fetchDreams = useCallback(async (append = false) => {
   try {
     if (!append) setLoading(true);
     setLoadingMore(append);
@@ -55,7 +57,8 @@ function DreamFeed() {
     if (moodMin) params.set("mood_min", moodMin);
     if (moodMax) params.set("mood_max", moodMax);
 
-    const response = await fetch(`http://localhost:5051/feed?${params.toString()}`);
+    // FIX: Use the imported API_URL instead of hardcoded localhost
+    const response = await fetch(`${API_URL}/feed?${params.toString()}`);
     if (!response.ok) throw new Error("Failed to fetch dreams.");
 
     const data = await response.json();
