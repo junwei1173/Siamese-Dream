@@ -166,7 +166,7 @@ function DreamAnalysis() {
           }
         }
 
-        const response = await fetch(`http://localhost:5051/dreams/search?${params}`);
+        const response = await fetch(`${API_URL}/dreams/search?${params}`);
         if (!response.ok) throw new Error('Failed to fetch dreams for analysis');
 
         const data = await response.json();
