@@ -1,4 +1,4 @@
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5051';
+const API_URL = process.env.REACT_APP_API_URL || 'https://siamese-dream1.onrender.com';
 
 export default API_URL;
