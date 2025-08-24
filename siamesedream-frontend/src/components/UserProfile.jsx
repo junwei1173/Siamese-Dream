@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import API_URL from '../config/api';
 
 function UserProfile() {
   const { userId } = useParams();
