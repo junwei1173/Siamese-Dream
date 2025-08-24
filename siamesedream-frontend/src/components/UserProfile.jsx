@@ -19,7 +19,7 @@ function UserProfile() {
           throw new Error('Invalid user ID in URL');
         }
         
-        const response = await fetch(`http://localhost:5051/users/${userId}/profile`);
+        const response = await fetch(`${API_URL}/users/${userId}/profile`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
