@@ -18,7 +18,7 @@ function RegisterForm() {
     setIsLoading(true);
 
     try {
-       const res = await axios.post(`${API_URL}/register`, form;
+       const res = await axios.post(`${API_URL}/register`, form;,
       setMsg(`✅ Account created successfully! Welcome, ${res.data.username}`);
     } catch (err) {
       setMsg(err.response?.data?.error || "Registration failed");
