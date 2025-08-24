@@ -1,6 +1,7 @@
 import { useEffect, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
+import API_URL from '../config/api';
 
 function Dashboard() {
   const { user } = useContext(AuthContext);
