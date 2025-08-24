@@ -21,7 +21,7 @@ function LoginForm() {
     setIsLoading(true);
 
     try {
-      const res = await axios.post(`${API_URL}/api/login`, form);
+      const res = await axios.post(`${API_URL}/login`, form);
 
 
       login(res.data.user);
