@@ -25,7 +25,8 @@ function DreamFeed() {
 
   const fetchPopularSymbols = async () => {
     try {
-      const response = await fetch('http://localhost:5051/symbols/popular');
+      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5051';
+      const response = await fetch(`${API_URL}/symbols/popular`);
       if (response.ok) {
         const data = await response.json();
         setPopularSymbols(data);
