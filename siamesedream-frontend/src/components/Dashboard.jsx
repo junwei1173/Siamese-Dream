@@ -120,7 +120,7 @@ function Dashboard() {
               e.target.style.transform = 'translateY(0)';
               e.target.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)';
             }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>✨</div>
+              <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}></div>
               <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.3rem' }}>Write a Dream</h3>
               <p style={{ margin: 0, opacity: '0.9' }}>Capture your latest dream journey</p>
             </div>
@@ -147,7 +147,7 @@ function Dashboard() {
               e.target.style.transform = 'translateY(0)';
               e.target.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)';
             }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>📚</div>
+              <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}></div>
               <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.3rem' }}>My Dreams</h3>
               <p style={{ margin: 0, opacity: '0.9' }}>Browse your dream collection</p>
             </div>
@@ -184,21 +184,21 @@ function Dashboard() {
               textAlign: 'center'
             }}>
               <div>
-                <div style={{ fontSize: '2rem', color: '#ffd93d', marginBottom: '0.5rem' }}>🌙</div>
+                <div style={{ fontSize: '2rem', color: '#ffd93d', marginBottom: '0.5rem' }}></div>
                 <div style={{ color: 'white', fontSize: '1.5rem', fontWeight: 'bold' }}>
                   {stats.total_dreams}
                 </div>
                 <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem' }}>Total Dreams</div>
               </div>
               <div>
-                <div style={{ fontSize: '2rem', color: '#ff6b9d', marginBottom: '0.5rem' }}>💫</div>
+                <div style={{ fontSize: '2rem', color: '#ff6b9d', marginBottom: '0.5rem' }}></div>
                 <div style={{ color: 'white', fontSize: '1.5rem', fontWeight: 'bold' }}>
                   {stats.lucid_dreams}
                 </div>
                 <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem' }}>Lucid Dreams</div>
               </div>
               <div>
-                <div style={{ fontSize: '2rem', color: '#4ecdc4', marginBottom: '0.5rem' }}>😊</div>
+                <div style={{ fontSize: '2rem', color: '#4ecdc4', marginBottom: '0.5rem' }}></div>
                 <div style={{ color: 'white', fontSize: '1.5rem', fontWeight: 'bold' }}>
                   {stats.avg_mood}
                 </div>
