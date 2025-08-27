@@ -1,17 +1,49 @@
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
+import axios from "axios";
 import API_URL from '../config/api';
 
 function Dashboard() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [stats, setStats] = useState({
+    total_dreams: 0,
+    lucid_dreams: 0,
+    avg_mood: 0
+  });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) {
       navigate("/login");
+      return;
     }
+
+    // Fetch user statistics
+    fetchUserStats();
   }, [user, navigate]);
+
+  const fetchUserStats = async () => {
+    if (!user) return;
+    
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API_URL}/users/${user.id}/profile`);
+      const statistics = response.data.statistics;
+      
+      setStats({
+        total_dreams: statistics.total_dreams || 0,
+        lucid_dreams: statistics.lucid_dreams || 0,
+        avg_mood: statistics.avg_mood ? parseFloat(statistics.avg_mood).toFixed(1) : 0
+      });
+    } catch (error) {
+      console.error('Error fetching user stats:', error);
+      // Keep default values if there's an error
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!user) return null;
 
@@ -23,37 +55,37 @@ function Dashboard() {
       fontFamily: 'system-ui, -apple-system, sans-serif'
     }}>
       {/* Header */}
-<div style={{
-  textAlign: 'center',
-  marginBottom: '3rem',
-  color: 'white'
-}}>
-  <img 
-    src="/siameselogo.png" 
-    alt="Logo" 
-    style={{
-      width: '80px',
-      height: '80px',
-      marginBottom: '1rem',
-      objectFit: 'contain'
-    }}
-  />
-  <h1 style={{
-    fontSize: '2.5rem',
-    margin: '0 0 0.5rem 0',
-    fontWeight: '300',
-    textShadow: '0 2px 4px rgba(0,0,0,0.3)'
-  }}>
-    Welcome back, {user.username}
-  </h1>
-  <p style={{
-    fontSize: '1.2rem',
-    margin: 0,
-    opacity: '0.9'
-  }}>
-    Your dream world awaits exploration
-  </p>
-</div>
+      <div style={{
+        textAlign: 'center',
+        marginBottom: '3rem',
+        color: 'white'
+      }}>
+        <img 
+          src="/siameselogo.png" 
+          alt="Logo" 
+          style={{
+            width: '80px',
+            height: '80px',
+            marginBottom: '1rem',
+            objectFit: 'contain'
+          }}
+        />
+        <h1 style={{
+          fontSize: '2.5rem',
+          margin: '0 0 0.5rem 0',
+          fontWeight: '300',
+          textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+        }}>
+          Welcome back, {user.username}
+        </h1>
+        <p style={{
+          fontSize: '1.2rem',
+          margin: 0,
+          opacity: '0.9'
+        }}>
+          Your dream world awaits exploration
+        </p>
+      </div>
 
       {/* Main Content */}
       <div style={{
@@ -88,7 +120,7 @@ function Dashboard() {
               e.target.style.transform = 'translateY(0)';
               e.target.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)';
             }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}></div>
+              <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>✨</div>
               <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.3rem' }}>Write a Dream</h3>
               <p style={{ margin: 0, opacity: '0.9' }}>Capture your latest dream journey</p>
             </div>
@@ -115,7 +147,7 @@ function Dashboard() {
               e.target.style.transform = 'translateY(0)';
               e.target.style.boxShadow = '0 10px 30px rgba(0,0,0,0.2)';
             }}>
-              <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}></div>
+              <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>📚</div>
               <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.3rem' }}>My Dreams</h3>
               <p style={{ margin: 0, opacity: '0.9' }}>Browse your dream collection</p>
             </div>
@@ -137,34 +169,44 @@ function Dashboard() {
             fontSize: '1.5rem',
             textAlign: 'center'
           }}>
-            Community Dream Statistics
+            Dream Statistics
           </h3>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-            gap: '1.5rem',
-            textAlign: 'center'
-          }}>
-            <div>
-              <div style={{ fontSize: '2rem', color: '#ffd93d', marginBottom: '0.5rem' }}></div>
-              <div style={{ color: 'white', fontSize: '1.5rem', fontWeight: 'bold' }}>12</div>
-              <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem' }}>Total Dreams</div>
+          
+          {loading ? (
+            <div style={{ textAlign: 'center', color: 'white', padding: '2rem' }}>
+              Loading your dream statistics...
             </div>
-            <div>
-              <div style={{ fontSize: '2rem', color: '#ff6b9d', marginBottom: '0.5rem' }}></div>
-              <div style={{ color: 'white', fontSize: '1.5rem', fontWeight: 'bold' }}>3</div>
-              <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem' }}>Lucid Dreams</div>
+          ) : (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+              gap: '1.5rem',
+              textAlign: 'center'
+            }}>
+              <div>
+                <div style={{ fontSize: '2rem', color: '#ffd93d', marginBottom: '0.5rem' }}>🌙</div>
+                <div style={{ color: 'white', fontSize: '1.5rem', fontWeight: 'bold' }}>
+                  {stats.total_dreams}
+                </div>
+                <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem' }}>Total Dreams</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '2rem', color: '#ff6b9d', marginBottom: '0.5rem' }}>💫</div>
+                <div style={{ color: 'white', fontSize: '1.5rem', fontWeight: 'bold' }}>
+                  {stats.lucid_dreams}
+                </div>
+                <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem' }}>Lucid Dreams</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '2rem', color: '#4ecdc4', marginBottom: '0.5rem' }}>😊</div>
+                <div style={{ color: 'white', fontSize: '1.5rem', fontWeight: 'bold' }}>
+                  {stats.avg_mood}
+                </div>
+                <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem' }}>Avg Mood</div>
+              </div>
             </div>
-            <div>
-              <div style={{ fontSize: '2rem', color: '#4ecdc4', marginBottom: '0.5rem' }}></div>
-              <div style={{ color: 'white', fontSize: '1.5rem', fontWeight: 'bold' }}>7.8</div>
-              <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem' }}>Avg Mood</div>
-            </div>
-          </div>
+          )}
         </div>
-
-        
-        
       </div>
     </div>
   );
