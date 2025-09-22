@@ -3,6 +3,7 @@ https://siamese-dream.vercel.app
 # Siamese Dream
 
 A modern, full-stack dream journaling application that helps users record, analyze, and explore their dreams with advanced features including sleep tracking, symbol analysis, and community sharing.
+<img width="1456" height="761" alt="Screenshot 2025-09-22 at 11 33 22 AM" src="https://github.com/user-attachments/assets/f02b9725-55e4-4ebe-954f-587ca45bea42" />
 
 ## Features
 
@@ -48,7 +49,8 @@ A modern, full-stack dream journaling application that helps users record, analy
 
 ### Database Schema
 - **Users Table**: Authentication and profile data
-- **Dreams Table**: Core dream entries with sleep data
+- **Dreams Table**: Core dream entries with sleep data![Uploading Screenshot 2025-09-22 at 11.33.22 AM.png…]()
+
 - **Symbols Table**: Reusable dream symbols
 - **Dream_Symbols Table**: Many-to-many relationship linking
 
