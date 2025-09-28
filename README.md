@@ -49,7 +49,7 @@ A modern, full-stack dream journaling application that helps users record, analy
 
 ### Database Schema
 - **Users Table**: Authentication and profile data
-- **Dreams Table**: Core dream entries with sleep data![Uploading Screenshot 2025-09-22 at 11.33.22 AM.png…]()
+- **Dreams Table**: Core dream entries with sleep data!
 
 - **Symbols Table**: Reusable dream symbols
 - **Dream_Symbols Table**: Many-to-many relationship linking
